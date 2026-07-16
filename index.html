@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sania Saxena | AI & ML Engineer Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['Fira Code', 'monospace'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: '#0a0a0a',
+                        neonCyan: '#00f2fe',
+                        neonBlue: '#4facfe',
+                        neonPurple: '#7f00ff',
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 15px rgba(0, 242, 254, 0.4)',
+                        'neon-purple': '0 0 15px rgba(127, 0, 255, 0.4)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #00f2fe, #7f00ff);
+            border-radius: 4px;
+        }
+        /* Glassmorphism utility */
+        .glass-card {
+            background: rgba(13, 13, 15, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 242, 254, 0.5);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+        }
+        /* Mouse Tracker Glow Glow */
+        #cursor-glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.06) 0%, rgba(127, 0, 255, 0.02) 50%, transparent 100%);
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+            transition: width 0.3s, height 0.3s;
+        }
+        /* Terminal input prompt animation */
+        .terminal-blink::after {
+            content: '_';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        /* Custom timeline track line line */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: linear-gradient(to bottom, #00f2fe, #7f00ff, #00f2fe);
+        }
+        @media (min-width: 768px) {
+            .timeline-line::before {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-neonCyan selection:text-black">
+
+    <div id="scroll-bar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-neonCyan via-neonBlue to-neonPurple z-50 transition-all duration-75" style="width: 0%"></div>
+
+    <canvas id="matrix-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none opacity-25 z-0"></canvas>
+
+    <div id="cursor-glow"></div>
+
+    <header class="fixed top-0 left-0 w-full z-40 glass-card border-b border-white/5 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="#" class="font-mono text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-neonCyan to-neonBlue">
+                &lt;SSAXENA<span class="text-neonPurple">.AI</span> /&gt;
+            </a>
+            <nav class="hidden md:flex space-x-8 font-mono text-sm">
+                <a href="#about" class="text-gray-400 hover:text-neonCyan transition-colors">// about</a>
+                <a href="#skills" class="text-gray-400 hover:text-neonCyan transition-colors">// skills</a>
+                <a href="#education" class="text-gray-400 hover:text-neonCyan transition-colors">// edu</a>
+                <a href="#experience" class="text-gray-400 hover:text-neonCyan transition-colors">// exp</a>
+                <a href="#projects" class="text-gray-400 hover:text-neonCyan transition-colors">// projects</a>
+                <a href="#certifications" class="text-gray-400 hover:text-neonCyan transition-colors">// certs</a>
+                <a href="#contact" class="text-gray-400 hover:text-neonCyan transition-colors">// contact</a>
+            </nav>
+            <div class="md:hidden">
+                <button id="mobile-menu-btn" class="text-gray-400 hover:text-neonCyan focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden glass-card border-t border-white/5 px-4 pt-2 pb-4 space-y-3 font-mono text-center">
+            <a href="#about" class="block text-gray-400 hover:text-neonCyan py-2">// about</a>
+            <a href="#skills" class="block text-gray-400 hover:text-neonCyan py-2">// skills</a>
+            <a href="#education" class="block text-gray-400 hover:text-neonCyan py-2">// edu</a>
+            <a href="#experience" class="block text-gray-400 hover:text-neonCyan py-2">// exp</a>
+            <a href="#projects" class="block text-gray-400 hover:text-neonCyan py-2">// projects</a>
+            <a href="#certifications" class="block text-gray-400 hover:text-neonCyan py-2">// certs</a>
+            <a href="#contact" class="block text-gray-400 hover:text-neonCyan py-2">// contact</a>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <section id="hero" class="min-h-screen flex flex-col justify-center pt-20 relative">
+            <div class="absolute right-10 top-1/4 font-mono text-xs text-neonPurple/20 pointer-events-none hidden lg:block select-none">
+                <pre>
+import torch
+import langchain
+from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(
+    "llm-core", 
+    load_in_8bit=True
+)
+# RAG Context Pipeline initialization...
+                </pre>
+            </div>
+            
+            <div class="max-w-4xl space-y-6">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-neonCyan/30 bg-neonCyan/5 text-neonCyan font-mono text-xs tracking-wider uppercase animate-pulse">
+                    <span class="w-2 h-2 rounded-full bg-neonCyan"></span>
+                    <span>System Status: Fully Operational</span>
+                </div>
+                
+                <h1 class="text-5xl sm:text-7xl font-bold tracking-tight text-white font-sans">
+                    Hi, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-neonCyan via-neonBlue to-neonPurple drop-shadow-neon-cyan">Sania Saxena</span>
+                </h1>
+                
+                <div class="h-12 flex items-center">
+                    <h2 class="text-2xl sm:text-3xl font-mono text-gray-300 font-medium">
+                        &gt; <span id="typing-text" class="text-neonCyan terminal-blink"></span>
+                    </h2>
+                </div>
+                
+                <p class="text-base sm:text-lg text-gray-400 font-sans max-w-2xl leading-relaxed">
+                    Passionate AI & Machine Learning Engineer with expertise in Machine Learning, Generative AI, Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), NLP, and Full Stack Development. Passionate about building intelligent applications that solve real-world problems.
+                </p>
+
+                <div class="pt-6 flex flex-wrap gap-4 font-mono text-sm">
+                    <a href="#projects" class="px-6 py-3 rounded bg-transparent border border-neonCyan text-neonCyan shadow-neon-cyan hover:bg-neonCyan hover:text-black transition-all duration-300 transform hover:-translate-y-1">
+                        View Projects
+                    </a>
+                    <a href="#" class="px-6 py-3 rounded bg-transparent border border-neonPurple text-neonPurple shadow-neon-purple hover:bg-neonPurple hover:text-white transition-all duration-300 transform hover:-translate-y-1">
+                        Download Resume <i class="fa-solid fa-download ml-1 text-xs"></i>
+                    </a>
+                    <a href="#contact" class="px-6 py-3 rounded bg-white/5 border border-white/10 text-gray-300 hover:border-white/30 hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1">
+                        Contact Me
+                    </a>
+                </div>
+
+                <div class="pt-8 flex space-x-6 text-xl text-gray-400">
+                    <a href="https://github.com/SaniaSaxena04" target="_blank" class="hover:text-neonCyan transition-colors transform hover:scale-110"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/sania-saxena-434803297" target="_blank" class="hover:text-neonBlue transition-colors transform hover:scale-110"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="mailto:saxenasania0235@gmail.com" class="hover:text-neonPurple transition-colors transform hover:scale-110"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-center animate-bounce hidden sm:block">
+                <a href="#about" class="font-mono text-xs text-gray-500 hover:text-neonCyan transition-colors">
+                    Scroll Down<br><i class="fa-solid fa-chevron-down mt-2"></i>
+                </a>
+            </div>
+        </section>
+
+        <hr class="border-white/5 my-0">
+
+        <section id="about" class="py-24 scroll-mt-16">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="flex items-center space-x-4">
+                        <span class="font-mono text-neonCyan text-xl">01.</span>
+                        <h2 class="text-3xl font-bold font-sans tracking-tight text-white">About Me</h2>
+                        <div class="h-[1px] bg-white/10 flex-grow"></div>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed font-sans text-base">
+                        I am a dedicated B.Tech Computer Science Engineering student holding a profound fascination for computational workflows and intelligent software designs. My primary specializations sit squarely in the realms of <strong class="text-neonCyan">Artificial Intelligence, Machine Learning, and Generative AI paradigms</strong>.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed font-sans text-base">
+                        Beyond core machine learning architectures, I am highly proficient in Full Stack Development, allowing me to build complete, functional product applications around AI systems. I build responsive frontends and resilient backends that enable real-world integration of Large Language Models and custom vector indexing solutions.
+                    </p>
+                    <div class="glass-card p-4 rounded border-l-4 border-neonPurple font-mono text-xs text-gray-400">
+                        <span class="text-neonPurple font-bold">🎯 Objective:</span> Engineering smart systems capable of extracting semantic structure from unstructured information fields.
+                    </div>
+                </div>
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative group">
+                        <div class="absolute -inset-2 rounded bg-gradient-to-r from-neonCyan to-neonPurple opacity-30 blur group-hover:opacity-60 transition duration-500"></div>
+                        <div class="relative w-64 h-64 bg-dark border border-white/10 rounded flex items-center justify-center overflow-hidden">
+                            <img src="images/profile.jpg" alt="Sania Saxena Profile" class="w-full h-full object-cover grayscale contrast-125 mix-blend-lighten group-hover:grayscale-0 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent opacity-60"></div>
+                            <div class="absolute bottom-4 font-mono text-xs text-neonCyan tracking-widest bg-dark/80 px-3 py-1 rounded border border-neonCyan/30">
+                                DEV_AVATAR
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-24 scroll-mt-16">
+            <div class="flex items-center space-x-4 mb-12">
+                <span class="font-mono text-neonCyan text-xl">02.</span>
+                <h2 class="text-3xl font-bold font-sans tracking-tight text-white">Technical Core</h2>
+                <div class="h-[1px] bg-white/10 flex-grow"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded transition-all duration-300">
+                    <div class="flex items-center space-x-3 mb-4 text-neonCyan">
+                        <i class="fa-solid fa-code text-xl"></i>
+                        <h3 class="font-mono text-md font-semibold text-white uppercase tracking-wider">Languages</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonCyan transition-all">Python</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonCyan transition-all">Java</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonCyan transition-all">C</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonCyan transition-all">JavaScript</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded transition-all duration-300">
+                    <div class="flex items-center space-x-3 mb-4 text-neonBlue">
+                        <i class="fa-solid fa-layer-group text-xl"></i>
+                        <h3 class="font-mono text-md font-semibold text-white uppercase tracking-wider">Web Stack</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">HTML</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">CSS</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">React.js</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">Node.js</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">Express.js</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded transition-all duration-300">
+                    <div class="flex items-center space-x-3 mb-4 text-neonPurple">
+                        <i class="fa-solid fa-database text-xl"></i>
+                        <h3 class="font-mono text-md font-semibold text-white uppercase tracking-wider">Databases</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonPurple transition-all">MongoDB</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonPurple transition-all">MySQL</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded transition-all duration-300 md:col-span-2 lg:col-span-1">
+                    <div class="flex items-center space-x-3 mb-4 text-neonCyan">
+                        <i class="fa-solid fa-brain text-xl"></i>
+                        <h3 class="font-mono text-md font-semibold text-white uppercase tracking-wider">AI & Data Intel</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-neonCyan/5 border border-neonCyan/30 text-neonCyan rounded font-mono text-xs">Machine Learning</span>
+                        <span class="px-3 py-1 bg-neonCyan/5 border border-neonCyan/30 text-neonCyan rounded font-mono text-xs">Generative AI</span>
+                        <span class="px-3 py-1 bg-neonCyan/5 border border-neonCyan/30 text-neonCyan rounded font-mono text-xs">LangChain</span>
+                        <span class="px-3 py-1 bg-neonCyan/5 border border-neonCyan/30 text-neonCyan rounded font-mono text-xs">RAG</span>
+                        <span class="px-3 py-1 bg-neonCyan/5 border border-neonCyan/30 text-neonCyan rounded font-mono text-xs">LLM</span>
+                        <span class="px-3 py-1 bg-neonCyan/5 border border-neonCyan/30 text-neonCyan rounded font-mono text-xs">NLP</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded transition-all duration-300">
+                    <div class="flex items-center space-x-3 mb-4 text-neonBlue">
+                        <i class="fa-solid fa-screwdriver-wrench text-xl"></i>
+                        <h3 class="font-mono text-md font-semibold text-white uppercase tracking-wider">Tools & Platforms</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">Git</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">GitHub</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">VS Code</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonBlue transition-all">Postman</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded transition-all duration-300">
+                    <div class="flex items-center space-x-3 mb-4 text-neonPurple">
+                        <i class="fa-solid fa-book text-xl"></i>
+                        <h3 class="font-mono text-md font-semibold text-white uppercase tracking-wider">CS Foundations</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonPurple transition-all">Data Structures & Algorithms</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonPurple transition-all">DBMS</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonPurple transition-all">Operating Systems</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonPurple transition-all">Computer Networks</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded font-mono text-xs hover:border-neonPurple transition-all">OOPs</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="education" class="py-24 scroll-mt-16">
+            <div class="flex items-center space-x-4 mb-12">
+                <span class="font-mono text-neonCyan text-xl">03.</span>
+                <h2 class="text-3xl font-bold font-sans tracking-tight text-white">Education </h2>
+                <div class="h-[1px] bg-white/10 flex-grow"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass-card p-6 rounded relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 h-24 w-24 bg-gradient-to-bl from-neonCyan/10 to-transparent pointer-events-none"></div>
+                    <div class="flex justify-between items-start">
+                        <div class="space-y-2">
+                            <span class="font-mono text-xs text-neonCyan px-2 py-0.5 bg-neonCyan/10 border border-neonCyan/30 rounded">2023 - Present</span>
+                            <h3 class="text-xl font-bold tracking-tight text-white">ABES Institute of Technology</h3>
+                            <p class="font-mono text-sm text-gray-300">Bachelor of Technology</p>
+                            <p class="text-sm text-gray-400">Computer Science Engineering</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="block font-mono text-xs text-gray-500">SCORE</span>
+                            <span class="font-mono text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-neonCyan to-neonBlue">7.7 CGPA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 h-24 w-24 bg-gradient-to-bl from-neonPurple/10 to-transparent pointer-events-none"></div>
+                    <div class="flex justify-between items-start">
+                        <div class="space-y-2">
+                            <span class="font-mono text-xs text-neonPurple px-2 py-0.5 bg-neonPurple/10 border border-neonPurple/30 rounded">Graduated 2023</span>
+                            <h3 class="text-xl font-bold tracking-tight text-white">Silver Shine School</h3>
+                            <p class="font-mono text-sm text-gray-300">Higher Secondary Education</p>
+                            <p class="text-sm text-gray-400">Science Matriculation Stream</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="py-24 scroll-mt-16">
+            <div class="flex items-center space-x-4 mb-16">
+                <span class="font-mono text-neonCyan text-xl">04.</span>
+                <h2 class="text-3xl font-bold font-sans tracking-tight text-white">Professional Experience</h2>
+                <div class="h-[1px] bg-white/10 flex-grow"></div>
+            </div>
+
+            <div class="relative timeline-line pl-8 md:pl-0">
+                
+                <div class="relative md:grid md:grid-cols-2 md:gap-8 mb-12">
+                    <div class="absolute left-[-24px] md:left-1/2 md:-translate-x-1/2 top-1.5 w-4 h-4 rounded-full bg-dark border-2 border-neonCyan shadow-neon-cyan z-20"></div>
+                    
+                    <div class="md:text-right md:pr-8">
+                        <span class="font-mono text-sm text-neonCyan font-semibold">June 2026 – Present</span>
+                        <h3 class="text-xl font-bold text-white mt-1">DRDO</h3>
+                        <p class="font-mono text-xs text-gray-400 uppercase tracking-widest">Research & Development Intern</p>
+                    </div>
+                    <div class="mt-2 md:mt-0 md:pl-8">
+                        <div class="glass-card p-5 rounded">
+                            <p class="text-sm text-gray-400 leading-relaxed">
+                                Working on research and development projects while gaining hands-on experience in software development paradigms and institutional technology solutions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative md:grid md:grid-cols-2 md:gap-8 mb-12">
+                    <div class="absolute left-[-24px] md:left-1/2 md:-translate-x-1/2 top-1.5 w-4 h-4 rounded-full bg-dark border-2 border-neonBlue shadow-neon-cyan z-20"></div>
+                    
+                    <div class="md:col-start-2 md:pl-8">
+                        <span class="font-mono text-sm text-neonBlue font-semibold">June 2026 – Present</span>
+                        <h3 class="text-xl font-bold text-white mt-1">Infosys Springboard</h3>
+                        <p class="font-mono text-xs text-gray-400 uppercase tracking-widest">Virtual Intern</p>
+                    </div>
+                    <div class="mt-2 md:mt-0 md:pr-8 md:text-right md:col-start-1 md:row-start-1">
+                        <div class="glass-card p-5 rounded">
+                            <p class="text-sm text-gray-400 leading-relaxed">
+                                Gaining deep conceptual clarity on advanced Artificial Intelligence pipelines including predictive Machine Learning modeling workflows, Deep Learning neural systems, and Generative AI prompt topologies.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative md:grid md:grid-cols-2 md:gap-8">
+                    <div class="absolute left-[-24px] md:left-1/2 md:-translate-x-1/2 top-1.5 w-4 h-4 rounded-full bg-dark border-2 border-neonPurple shadow-neon-purple z-20"></div>
+                    
+                    <div class="md:text-right md:pr-8">
+                        <span class="font-mono text-sm text-neonPurple font-semibold">2026</span>
+                        <h3 class="text-xl font-bold text-white mt-1">NVIDIA</h3>
+                        <p class="font-mono text-xs text-gray-400 uppercase tracking-widest">Machine Learning Trainee</p>
+                    </div>
+                    <div class="mt-2 md:mt-0 md:pl-8">
+                        <div class="glass-card p-5 rounded">
+                            <p class="text-sm text-gray-400 leading-relaxed">
+                                Attained intensive hands-on execution experience managing standard Machine Learning engineering pipelines utilizing accelerated GPU architectures and framework utilities.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="projects" class="py-24 scroll-mt-16">
+            <div class="flex items-center space-x-4 mb-12">
+                <span class="font-mono text-neonCyan text-xl">05.</span>
+                <h2 class="text-3xl font-bold font-sans tracking-tight text-white">Featured Builds</h2>
+                <div class="h-[1px] bg-white/10 flex-grow"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-card rounded overflow-hidden flex flex-col group transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-neonCyan/20 via-slate-900 to-black relative flex items-center justify-center border-b border-white/5 overflow-hidden">
+                        <div class="absolute inset-0 bg-grid-white/[0.02] bg-[size:20px_20px]"></div>
+                        <i class="fa-solid fa-robot text-5xl text-neonCyan/30 group-hover:scale-110 transition duration-500"></i>
+                        <span class="absolute bottom-3 left-3 font-mono text-xs text-white/40 tracking-widest">PROJECT_ENG_01 //</span>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <h3 class="text-2xl font-bold text-white tracking-tight group-hover:text-neonCyan transition-colors">MyCollegeAI</h3>
+                            <p class="font-mono text-xs text-neonBlue">AI Assistant for College Infrastructure</p>
+                            <p class="text-sm text-gray-400 font-sans leading-relaxed pt-2">
+                                Conceptualized and built an AI-powered assistant engineered to automate student responses regarding comprehensive academic regulations, query resolutions, and real-time physical campus operational details. Integrated raw LLM architectures with structured data mechanisms.
+                            </p>
+                        </div>
+                        
+                        <div class="space-y-4 pt-2">
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">LLM</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">Vector Database</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">MongoDB</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">Node.js</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">Express.js</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neonCyan/10 border border-neonCyan/20 text-neonCyan">WhatsApp Business API</span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded overflow-hidden flex flex-col group transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-neonPurple/20 via-slate-900 to-black relative flex items-center justify-center border-b border-white/5 overflow-hidden">
+                        <div class="absolute inset-0 bg-grid-white/[0.02] bg-[size:20px_20px]"></div>
+                        <i class="fa-solid fa-file-invoice text-5xl text-neonPurple/30 group-hover:scale-110 transition duration-500"></i>
+                        <span class="absolute bottom-3 left-3 font-mono text-xs text-white/40 tracking-widest">PROJECT_WEB_02 //</span>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <h3 class="text-2xl font-bold text-white tracking-tight group-hover:text-neonPurple transition-colors">Resume Builder</h3>
+                            <p class="font-mono text-xs text-neonPurple">Web-Based Document Generator</p>
+                            <p class="text-sm text-gray-400 font-sans leading-relaxed pt-2">
+                                Designed and constructed an interactive web-based resume compilation application enabling developers to layout modular sections swiftly. Features high performance reactive field updates with responsive styling layout sheets.
+                            </p>
+                        </div>
+                        
+                        <div class="space-y-4 pt-2">
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">HTML</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">CSS</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">JavaScript</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">Node.js</span>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="certifications" class="py-24 scroll-mt-16">
+            <div class="flex items-center space-x-4 mb-12">
+                <span class="font-mono text-neonCyan text-xl">06.</span>
+                <h2 class="text-3xl font-bold font-sans tracking-tight text-white">Verified Certifications</h2>
+                <div class="h-[1px] bg-white/10 flex-grow"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-5 rounded flex flex-col justify-between border-t-2 border-t-neonCyan">
+                    <div class="space-y-2">
+                        <i class="fa-solid fa-certificate text-neonCyan text-lg mb-1"></i>
+                        <h3 class="font-bold text-white text-base tracking-tight">Data Structures & Algorithms</h3>
+                        <p class="font-mono text-xs text-gray-400">CodeChef</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-white/5 font-mono text-[10px] text-gray-500 space-y-1">
+                        <div>ID: <span class="text-gray-300">42d4968</span></div>
+                        <div>USER: <span class="text-gray-300">abit230100204</span></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded flex flex-col justify-between border-t-2 border-t-neonBlue">
+                    <div class="space-y-2">
+                        <i class="fa-solid fa-certificate text-neonBlue text-lg mb-1"></i>
+                        <h3 class="font-bold text-white text-base tracking-tight">Database Management System</h3>
+                        <p class="font-mono text-xs text-gray-400">Infosys Springboard</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded flex flex-col justify-between border-t-2 border-t-neonPurple">
+                    <div class="space-y-2">
+                        <i class="fa-solid fa-certificate text-neonPurple text-lg mb-1"></i>
+                        <h3 class="font-bold text-white text-base tracking-tight">JSP & MySQL Integration</h3>
+                        <p class="font-mono text-xs text-gray-400">ABESIT</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded flex flex-col justify-between border-t-2 border-t-neonCyan">
+                    <div class="space-y-2">
+                        <i class="fa-solid fa-certificate text-neonCyan text-lg mb-1"></i>
+                        <h3 class="font-bold text-white text-base tracking-tight">Generative AI Core</h3>
+                        <p class="font-mono text-xs text-gray-400">Coursera</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-24 scroll-mt-16">
+            <div class="flex items-center space-x-4 mb-12">
+                <span class="font-mono text-neonCyan text-xl">07.</span>
+                <h2 class="text-3xl font-bold font-sans tracking-tight text-white">Establish Connection</h2>
+                <div class="h-[1px] bg-white/10 flex-grow"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div class="lg:col-span-5 space-y-6">
+                    <h3 class="text-xl font-bold font-sans text-white">Let's build something intelligent.</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        My inbox is always open for system optimization discussions, architectural review requests, or collaborative project build exploration. Drop a message!
+                    </p>
+                    
+                    <div class="space-y-4 font-mono text-xs text-gray-400">
+                        <div class="flex items-center space-x-3 p-3 rounded bg-white/5 border border-white/5">
+                            <i class="fa-solid fa-user text-neonCyan text-base w-5"></i>
+                            <div>
+                                <span class="block text-gray-600 text-[10px]">NAME</span>
+                                <span class="text-gray-200 text-sm font-semibold">Sania Saxena</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 rounded bg-white/5 border border-white/5">
+                            <i class="fa-solid fa-envelope text-neonBlue text-base w-5"></i>
+                            <div>
+                                <span class="block text-gray-600 text-[10px]">EMAIL</span>
+                                <a href="mailto:saxenasania0235@gmail.com" class="text-gray-200 text-sm hover:text-neonBlue transition-colors">saxenasania0235@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 rounded bg-white/5 border border-white/5">
+                            <i class="fa-solid fa-phone text-neonPurple text-base w-5"></i>
+                            <div>
+                                <span class="block text-gray-600 text-[10px]">PHONE TELEMETRY</span>
+                                <span class="text-gray-200 text-sm">+91 7678154232</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4 font-mono text-xs pt-2">
+                        <a href="https://github.com/SaniaSaxena04" target="_blank" class="px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-300 hover:text-neonCyan hover:border-neonCyan/50 transition-all">
+                            <i class="fa-brands fa-github mr-1"></i> GitHub
+                        </a>
+                        <a href="https://www.linkedin.com/in/sania-saxena-434803297" target="_blank" class="px-3 py-2 rounded bg-white/5 border border-white/10 text-gray-300 hover:text-neonBlue hover:border-neonBlue/50 transition-all">
+                            <i class="fa-brands fa-linkedin mr-1"></i> LinkedIn
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7">
+                    <form action="#" method="POST" class="glass-card p-6 rounded space-y-4 font-mono text-sm">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wider">// Your Signature / Identity</label>
+                            <input type="text" placeholder="Name" required class="w-full bg-dark/60 border border-white/10 rounded px-4 py-2.5 text-white focus:outline-none focus:border-neonCyan transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wider">// Callback Email Address</label>
+                            <input type="email" placeholder="Email Address" required class="w-full bg-dark/60 border border-white/10 rounded px-4 py-2.5 text-white focus:outline-none focus:border-neonCyan transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wider">// System Payload / Transmission Message</label>
+                            <textarea rows="4" placeholder="Type your message details here..." required class="w-full bg-dark/60 border border-white/10 rounded px-4 py-2.5 text-white focus:outline-none focus:border-neonCyan transition-all resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-3 rounded bg-transparent border border-neonCyan text-neonCyan font-bold tracking-widest uppercase transition-all duration-300 hover:bg-neonCyan hover:text-black shadow-neon-cyan">
+                            Transmit Packet <i class="fa-solid fa-paper-plane ml-1 text-xs"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-white/5 bg-dark relative z-10 py-8 mt-12 text-center font-mono text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p>Designed &amp; Developed by <span class="text-neonCyan">Sania Saxena</span> © 2026</p>
+            <p class="text-[10px] text-gray-700">All connections monitored // Secure Layer Executable</p>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="fixed bottom-6 right-6 p-3 rounded glass-card border border-white/10 text-neonCyan opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 hover:border-neonCyan hover:text-white">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // --- 1. Matrix Background Streams Canvas Logic ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890ABCDEF';
+        const alphabet = katakana.split('');
+
+        const fontSize = 14;
+        let columns = canvas.width / fontSize;
+        let rainDrops = Array(Math.floor(columns)).fill(1);
+
+        window.addEventListener('resize', () => {
+            columns = canvas.width / fontSize;
+            rainDrops = Array(Math.floor(columns)).fill(1);
+        });
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0f0'; // base fallback fallback
+            ctx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                
+                // Color configuration cycling matrix aesthetics matching themes matching themes
+                if(i % 3 === 0) ctx.fillStyle = '#00f2fe'; // Neon Cyan
+                else if (i % 3 === 1) ctx.fillStyle = '#4facfe'; // Neon Blue
+                else ctx.fillStyle = '#7f00ff'; // Neon Purple
+                
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if(rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+
+        // --- 2. Interactive Reactive Cursor Position Glow Mapping ---
+        const glow = document.getElementById('cursor-glow');
+        window.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+
+        // --- 3. Typing Framework Mechanics Loop ---
+        const words = [
+            "AI Engineer", 
+            "Machine Learning Developer", 
+            "Generative AI Enthusiast", 
+            "LLM Explorer", 
+            "RAG Developer", 
+            "Full Stack Developer"
+        ];
+        let i = 0;
+        let timer;
+
+        function typingEffect() {
+            let word = words[i].split("");
+            var loopTyping = function() {
+                if (word.length > 0) {
+                    document.getElementById('typing-text').innerHTML += word.shift();
+                } else {
+                    setTimeout(deletingEffect, 2000);
+                    return false;
+                }
+                timer = setTimeout(loopTyping, 100);
+            };
+            loopTyping();
+        }
+
+        function deletingEffect() {
+            let word = words[i].split("");
+            var loopDeleting = function() {
+                if (word.length > 0) {
+                    word.pop();
+                    document.getElementById('typing-text').innerHTML = word.join("");
+                } else {
+                    if (words.length > (i + 1)) {
+                        i++;
+                    } else {
+                        i = 0;
+                    }
+                    setTimeout(typingEffect, 500);
+                    return false;
+                }
+                timer = setTimeout(loopDeleting, 60);
+            };
+            loopDeleting();
+        }
+        window.onload = typingEffect;
+
+        // --- 4. Scroll Tracking Progress Indicators & Utilities ---
+        const scrollBar = document.getElementById('scroll-bar');
+        const backToTopBtn = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+            if (totalScroll > 0) {
+                const scrolledPercentage = (window.scrollY / totalScroll) * 100;
+                scrollBar.style.width = scrolledPercentage + '%';
+            }
+
+            // Back to top structural threshold handling handling
+            if (window.scrollY > 400) {
+                backToTopBtn.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // --- 5. Mobile Navigation Menu Toggle View ---
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        // Close menu when clicking navigation anchor lines lines
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
