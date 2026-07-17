@@ -225,13 +225,30 @@ model = AutoModelForCausalLM.from_pretrained(
                     </div>
                 </div>
                 <div class="lg:col-span-5 flex justify-center">
-                    <div class="relative group">
-                        <div class="absolute -inset-2 rounded bg-gradient-to-r from-neonCyan to-neonPurple opacity-30 blur group-hover:opacity-60 transition duration-500"></div>
-                        <div class="relative w-64 h-64 bg-dark border border-white/10 rounded flex items-center justify-center overflow-hidden">
-                            <img src="images/profile.jpeg" alt="Sania Saxena Profile" class="w-full h-full object-cover grayscale contrast-125 mix-blend-lighten group-hover:grayscale-0 transition duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent opacity-60"></div>
-                            <div class="absolute bottom-4 font-mono text-xs text-neonCyan tracking-widest bg-dark/80 px-3 py-1 rounded border border-neonCyan/30">
-                                DEV_AVATAR
+    <div class="relative group">
+
+        <!-- Neon Glow -->
+        <div class="absolute -inset-3 rounded-2xl bg-gradient-to-r from-neonCyan to-neonPurple opacity-40 blur-xl group-hover:opacity-70 transition duration-700"></div>
+
+        <!-- Profile Card -->
+        <div class="relative w-80 h-[500px] bg-dark border border-white/10 rounded-2xl flex items-center justify-center overflow-hidden">
+
+            <!-- Full Image -->
+            <img
+                src="images/profile.jpeg"
+                alt="Sania Saxena Profile"
+                class="w-full h-full object-contain bg-black transition duration-500"
+            >
+
+            <!-- Label -->
+            <div class="absolute bottom-5 px-5 py-2 font-mono text-sm text-neonCyan tracking-widest bg-black/80 rounded-lg border border-neonCyan/40 backdrop-blur">
+                AVATAR
+            </div>
+
+        </div>
+
+    </div>
+</div>
                             </div>
                         </div>
                     </div>
